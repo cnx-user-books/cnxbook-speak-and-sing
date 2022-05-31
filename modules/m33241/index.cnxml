@@ -1,0 +1,116 @@
+<document xmlns="http://cnx.rice.edu/cnxml">
+  <title>Speak and Sing -  Syllable Detection</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m33241</md:content-id>
+  <md:title>Speak and Sing -  Syllable Detection</md:title>
+  <md:abstract>The processes used to detect syllables in spoken words by examining the energy and periodicity of an audio clip.</md:abstract>
+  <md:uuid>28cc19ad-e3e9-4cef-9304-65edb14a73fc</md:uuid>
+</metadata>
+<content>
+    <section id="id17769849">
+      <title>Syllable Detection</title>
+      <para id="id15824589">The syllable detection algorithm takes as its input recorded speech and produces an output matrix denoting the start and end times of each syllable in the recording. There are two main parts to the algorithm. First, each sound in the input file must be classified as a vowel, consonant, or noise. Second, the algorithm must determine which sequences of sounds correspond to valid syllables.</para>
+      <section id="id11313069">
+        <title>Sound Classification</title>
+        <para id="id16228058">The sound classification step splits the input signal into many small windows to be analyzed separately. The classification of these windows as vowels, consonants, or noise relies on two core characteristics of the signal: energy and periodicity. Vowels stand out as having the highest energy and periodicity values, noise ideally has extremely low energy, and consonants are everything that falls between these two extremes.</para>
+        <para id="id9719767">The energy of a window of the input vector W is calculated as </para>
+        <code id="id16229178" display="block">E = |W|^2. 
+    </code>
+        <para id="id11053523">However it is necessary to set general energy thresholds that are valid for speech samples of varying volume. In order to accomplish this, after the energies of all the windows have been calculated, they are converted into decibels relative to the maximum energy value. </para>
+        <code id="id8209192" display="block">E' = 10*log10(E/max(E)). 
+    </code>
+        <para id="id9176776">The energy thresholds are then defined in terms of a percent of the total energy range. For example, if an energy threshold was 25 percent and the energies ranged from -100 to 0 dB, then everything from -25 to 0 dB would be above the threshold.</para>
+        <para id="id15683637">In some cases, energy alone is enough to determine whether a certain sound is a vowel, consonant, or noise. For instance, here is a plot of the energy vs. time of a recording of the spoken word "cat." It is easy to tell which portions of the figure correspond to vowels, consonants, and noise by inspection: </para>
+        <para id="id6719315">
+          <figure id="id16234677">
+            <media id="id16234677_media" alt="">
+              <image mime-type="image/jpg" src="../../media/graphics1-9bc9.jpg" id="id16234677__onlineimage" height="333" width="443"/>
+            </media>
+            <caption>The energy threshold clearly divides the high-energy vowel portion of the signal from the consonants.</caption>
+          </figure>
+        </para>
+        <para id="id7149795">However, energy cannot always separate vowels and consonants so dramatically. For example, the word "zoo." </para>
+        <figure id="id5874370">
+          <media id="id5874370_media" alt="">
+            <image mime-type="image/jpg" src="../../media/graphics2.jpg" id="id5874370__onlineimage" height="346" width="462"/>
+          </media>
+          <caption>The ending vowel sound drops too close to the threshold.</caption>
+        </figure>
+        <para id="id7441694">Although a portion of the vowel still has significantly higher energy than the consonant, the ending portion of the vowel drops in energy to the point where it is dangerously close to the threshold. Raising the threshold so that the "z" sound is certain not to be counted as a vowel only makes it more likely that portions of the "oo" sound will be mistakenly classified as consonants. Clearly, additional steps are necessary to more accurately differentiate between consonants and vowels.</para>
+      </section>
+      <section id="id8711638">
+        <title>Periodicity Analysis</title>
+        <para id="id7780607">The algorithm uses the periodicity of the signal to accomplish this task. The periodicity is obtained using the autocovariance of the window being analyzed. This is calculated as: </para>
+        <code id="id11699224" display="block">C(m) = E[(W(n+m)-mu)*conj(W(n)-mu)]
+    </code>
+        <para id="id5025047">Mu is the mean of the window W. It measures how similar the signal is to itself at shifts of m samples and can therefore distinguish periodic signals from aperiodic ones due to their repetitive nature. The autocovariance vector is most stable and therefore most meaningful for values of m relatively close to 0, since for larger m, fewer samples are considered, causing the results to become more random and unreliable. Therefore, the sound classification algorithm only considers autocovariance values with m less than 1/5 the total window size. These autocovariance values are normalized so that the value at m = 0 is 1, the largest possible value. The maximum autocovariance in this stable region is considered the periodicity of the window.</para>
+        <para id="id8323236">The periodicity values for vowels are extremely high, while most unvoiced, and some voiced, consonants exhibit very low periodicity. Periodicity is especially useful in detecting fricative or affricate consonants which are both characterized by a great deal of random, possibly high-energy, noise due to their method of articulation. Examples of these consonants include "s," "z," "j," and "ch." The contrast between the periodicity of a fricative consonant and a vowel can be clearly seen in this plot. </para>
+        <para id="id17732818">
+          <figure id="id16307347">
+            <media id="id16307347_media" alt="">
+              <image mime-type="image/jpg" src="../../media/graphics3.jpg" id="id16307347__onlineimage" height="357" width="475"/>
+            </media>
+          </figure>
+        </para>
+        <para id="id17747087">Putting it all together, the sound classification portion of the algorithm first calculates the energy and periodicity of each window of the input signal. If both the energy and periodicity are higher than certain thresholds, the window is classified as a vowel. If the energy is smaller than a very low threshold, the window is counted as noise, and everything in between is considered a consonant. Let's take another look at the energy characteristics of the word "zoo" (refer to figure 2). Using this alone, we could not easily distinguish the high-energy "z" from the lower-energy portion of the "oo." However, here is a plot of the periodicity vs. time for the same recording. </para>
+        <para id="id5187192"><figure id="id8558646">
+            <media id="id8558646_media" alt="">
+              <image mime-type="image/jpg" src="../../media/graphics4.jpg" id="id8558646__onlineimage" height="358" width="477"/>
+            </media>
+            <caption>The difference between the "z" and the "oo" is now much more pronounced.</caption>
+          </figure>
+        </para>
+        <para id="id9288045">This plot shows a clear contrast between the aperiodic fricative "z" and the periodic vowel. Taken together, these data now provide sufficient information for the sound classification algorithm to correctly identify each sound in this recording.</para>
+        <para id="id4524453">This method works with a reasonable degree of accuracy, but there are a few challenges that must be considered. The greatest among these is the handling of liquid consonants like "l," "y," or "m." In certain cases, these sounds are used as consonants at syllable boundaries, while in other circumstances, they act as a vowel usually would in making up the majority of the syllable. For example, in the word "little," the first "l" is acting as a consonant, but the "l" sound is also used as the central portion of the second syllable. Therefore, these sounds are not always accurately classified, and they must be annunciated strongly in the input recording if they are acting as syllable boundaries.</para>
+        <para id="id8650848">Another issue with this method is that sometimes it detects short bursts of one sound type in the middle of another. For instance, there may be 1 or 2 consonant windows surrounded by a large number of noise windows or a small number of vowel windows in the middle of a large section of consonant windows. Several situations can lead to errors like this. For example, the background noise in a recording might boost the energy of a window high enough to be classified as a consonant, or random spikes in the periodicity of an otherwise aperiodic signal could cause part of a consonant to be classified as a vowel. These errors can be minimized by imposing a length constraint on sounds. In order for a group of windows to be classified as a particular sound, they must represent a long enough chunk of time to be considered meaningful. If the group of windows is too small, they are reclassified to match the sound immediately preceding them.</para>
+      </section>
+      <section id="id3560325">
+        <title>Syllable Interpretation</title>
+        <para id="id8772473">After each sound in the input has been classified, it is necessary to determine which sound sequences should be interpreted as syllables. This is accomplished using a tree-like decision structure which examines consecutive elements of the sound classification vector, comparing them to all possible sequences. Once a known sequence is identified, it is added to the list of syllables, and the algorithm moves on to the next ungrouped sounds. The decision structure is depicted in the following figure. </para>
+        <figure id="id7998990">
+          <media id="id7998990_media" alt="">
+            <image mime-type="image/jpg" src="../../media/graphics5.jpg" id="id7998990__onlineimage" height="428" width="630"/>
+          </media>
+        </figure>
+        <para id="id4524070">After this step, some syllables were occasionally much too short. For instance, the word "good" had a small probability of being split up into two syllables ("goo"" and "d") depending on how much the speaker emphasizes the voicing of the d. Further increasing the minimum allowable sound duration caused too much information to be lost or misinterpreted, so a minimum syllable duration parameter was also added. If a syllable is too short, it is combined with an adjacent syllable based on its surrounding sounds. If one of the sounds adjacent to the short syllable is noise and the other is not, the short syllable is added to the side without noise to preserve continuity of the signal. If neither sound adjacent to the syllable is noise, the duration of each adjacent sound is calculated, and the syllable is tacked onto the side with the shortest neighboring sound as this one is more likely to have been cut off in error.</para>
+        <para id="id17821965">The following table lists the values for the various thresholds and parameters we found worked best for relatively clean, noise-free, input signals. These parameters must be adjusted if a great deal of periodic or energetic background noise, such as might be caused by a microphone picking up the sound of a computer fan, is expected to corrupt the input recording.</para>
+        <table id="id15563644" summary="">
+          <tgroup cols="2">
+            <colspec colnum="1" colname="c1"/>
+            <colspec colnum="2" colname="c2"/>
+            <tbody>
+              <row>
+                <entry>Parameter</entry>
+                <entry>Value</entry>
+              </row>
+              <row>
+                <entry>Window length</entry>
+                <entry>5 ms</entry>
+              </row>
+              <row>
+                <entry>Vowel periodicity threshold</entry>
+                <entry>.75</entry>
+              </row>
+              <row>
+                <entry>Vowel energy threshold</entry>
+                <entry>27% of total energy range</entry>
+              </row>
+              <row>
+                <entry>Noise energy threshold</entry>
+                <entry>55% of total energy range</entry>
+              </row>
+              <row>
+                <entry>Minimum sound duration</entry>
+                <entry>40 ms</entry>
+              </row>
+              <row>
+                <entry>Minimum syllable length</entry>
+                <entry>80 ms</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </section>
+    </section>
+  </content>
+</document>

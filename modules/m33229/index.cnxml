@@ -1,0 +1,57 @@
+<document xmlns="http://cnx.rice.edu/cnxml">
+  <title>Speak and Sing -  Introduction</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m33229</md:content-id>
+  <md:title>Speak and Sing -  Introduction</md:title>
+  <md:abstract>An Introduction to the Speech Scaling and Pitch Correction program: The Speak and Sing.</md:abstract>
+  <md:uuid>81171bb5-ae9b-414e-970f-a058020eceae</md:uuid>
+</metadata>
+<content>
+    <section id="id17219417">
+      <title>Speech Scaling and Pitch Correction </title>
+      <para id="id17219424">The speech scaling and pitch correction program, or “Speak &amp; Sing”, generates a properly-timed and pitch-accurate sample of a known song from recorded spoken words.</para>
+      <para id="id17219436">A voice modulation application which detects the timing and pitch of the recorded input and automatically performs time scaling and pitch correction to match the speech to a pre-selected song, producing a musical output.</para>
+      <section id="id17219444">
+        <title>Making a Smarter Autotuner</title>
+        <para id="id17219450">Pitch correction is used by musicians to improve the sound of song vocals by fixing off-key singing or adding distortion. It can be applied real-time using a synthesizer keyboard or added after recording. However, these “autotuners” can’t fix off-tempo singing, and automatic autotuners depend on the singer to be relatively close to the right pitch. </para>
+        <para id="id17219466">Goals for the Speak and Sing:</para>
+        <list id="id17219471" list-type="bulleted">
+          <item>Proof-of-concept of automated syllable detection, time scaling, and pitch correction in one robust application</item>
+          <item>Provides open-ended, customizable options for audio processing</item>
+          <item>Demonstrates time and frequency DSP applications using MatLab</item>
+        </list>
+      </section>
+      <section id="id17219495">
+        <title>Implementation: An Overview</title>
+        <para id="id17219501">
+          <emphasis>Recording:</emphasis>
+        </para>
+        <para id="id17219509">Input voice samples are recorded in mono-channel audio at a sampling frequency of 16,000 (although any sampling frequency can be used). It is then imported into MatLab and the following functions are run in sequence:</para>
+        <para id="id17219517">
+          <emphasis>Song Interpretation and Retrieval:</emphasis>
+        </para>
+        <para id="id17219524">Contains data for selected songs based on sheet music. It returns a vector of fundamental note frequencies and note lengths depending on the song selected and the desired tempo.</para>
+        <para id="id17219532">Available Songs:</para>
+        <para id="id17219536">1. Christina Aguilera - <emphasis effect="italics">Genie in a Bottle</emphasis></para>
+        <para id="id17219545">2. <emphasis effect="italics">Mary Had a Little Lamb</emphasis></para>
+        <para id="id17219554">3. <emphasis effect="italics">Row, Row, Row Your Boat</emphasis></para>
+        <para id="id17219563">
+          <emphasis>Syllable Detection</emphasis>
+        </para>
+        <para id="id17219571">Analyzes the input speech data and determines the locations and lengths of each syllable. After dividing the signal up into several short windowed pieces, it detects the periodicity and energy of each window to determine the type of sound (vowel, consonant, or noise). The locations of the syllables is then determined based on the pattern of sounds.</para>
+        <para id="id17219581">
+          <emphasis>Time scaling</emphasis>
+        </para>
+        <para id="id17219589">Interprets the detected syllable locations and stretches or shrinks the syllable to match the length of the word in the song. The time scaling is performed using a time-domain Waveform Similarity Overlap Add (WSOLA) algorithm, which breaks up the signal into overlapping windows and copies each window to a new location, either closer together or further apart. This stretches or compresses the length of the speech without losing quality or information. </para>
+        <para id="id17219603">
+          <emphasis>Pitch correction</emphasis>
+        </para>
+        <para id="id17219611">Detects the pitch of the signal, compares it to the desired pitch of the song, and makes pitch corrections. Pitch detection is done using FAST-autocorrelation, in which small windows of the signal are offset and autocorrelated to find the period, and thus frequency, of the signal for that interval. Pitch correction is performed with Pitch Synchronous Overlap Add (PSOLA), which moves windowed segments closer or further apart and overlap-added to alter the frequency without loss of sound.</para>
+      </section>
+      <section id="id17219625">
+        <title>The Result</title>
+        <para id="id17219631">The resulting audio file sounds like the input speech or singing, but the words will now line up with those of the original song and the pitch will be adjusted. The resulting impact on sound is that the recorded input will now sound more like the song, without compromising the original voice or speech.</para>
+      </section>
+    </section>
+  </content>
+</document>

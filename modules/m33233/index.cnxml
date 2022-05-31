@@ -1,0 +1,17 @@
+<document xmlns="http://cnx.rice.edu/cnxml">
+  <title>Speak and Sing -  Recording Procedure</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m33233</md:content-id>
+  <md:title>Speak and Sing -  Recording Procedure</md:title>
+  <md:abstract>How we recorded the words to be used with the Speak and Sing.</md:abstract>
+  <md:uuid>37ae00bd-4b41-47cb-a231-0466b1287f6a</md:uuid>
+</metadata>
+<content>
+    <section id="id5587078">
+      <title>Recording</title>
+      <para id="id5565480">Input voice samples are recorded in mono-channel audio with a sampling frequency of 16,000 Hz. The sampling rate chosen allows for a balance of processing efficiency and sound quality – the computation time of the program generally scales linearly with increase in sampling rate. The selected sampling frequency is also convenient for computation, as the MatLab program’s wave audio operations perform best with sampling frequencies in increments of 8,000 Hz. The program allows for the use of any sampling frequency and will perform adequately for sampling frequencies up to and beyond the audio standard 44.1 kHz, but processing time and program durability become an issue.</para>
+      <para id="id5665443">When recording, the best results are produced for input speech or song which is delivered slowly and clearly, with either brief pauses or strongly-enunciated consonants between syllables and words.</para>
+      <para id="id5472410">The recorded sound is processed in Audacity, a freeware recording software, to trim out excess electrical and environmental noise and remove existing DC offsets. It is then ready for handling in the MatLab environment.</para>
+    </section>
+  </content>
+</document>

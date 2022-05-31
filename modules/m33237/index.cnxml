@@ -1,0 +1,31 @@
+<document xmlns="http://cnx.rice.edu/cnxml">
+  <title>Speak and Sing -  Song Interpretation</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m33237</md:content-id>
+  <md:title>Speak and Sing -  Song Interpretation</md:title>
+  <md:abstract>How songs were selected and input for use with the Speak and Sing.</md:abstract>
+  <md:uuid>5fe76ab7-611e-4dc4-b2bd-32fdd9d284bd</md:uuid>
+</metadata>
+<content>
+    <section id="id1167213134796">
+      <title>Song Interpretation</title>
+      <para id="id1167213529220">The songs to be used by the Speak and Sing were predetermined and preprogrammed. For simplicity, the songs feature a one-to-one format. That means every syllable of the lyrics is associated with one duration and one pitch, there are no rests and no slurs. The song interpretation is done in two vectors, one contains all of the durations (in seconds) to be used by the duration matching, and the other contains all of the note frequencies (in hertz) to be used by the pitch matching.</para>
+      <para id="id1167213505547">Here is an example of a measure of sheet music that has been turned into a useable vector.</para>
+      <para id="id1167219538596">
+        <figure id="id1167215160344">
+          <title>Mary Had a Little Lamb</title>
+          <media id="id1167215160344_media" alt="">
+            <image mime-type="image/jpg" src="../../media/graphics1-23ab.jpg" id="id1167215160344__onlineimage" height="79" width="216"/>
+          </media>
+        </figure>
+      </para>
+      <code id="id1167214462280" display="block">notes = ([246.94; 220;196; 220; 246.94; 246.94; 246.94;]);
+    duration = ([.5; .5; .5; .5; .5; .5; .5;]);
+    </code>
+      <para id="id1167213362014">Three songs were made available for use:</para>
+      <para id="id1167215815915">1. Christina Aguilera - <emphasis effect="italics">Genie in a Bottle</emphasis></para>
+      <para id="id1167212618014">2. <emphasis effect="italics">Mary Had a Little Lamb</emphasis></para>
+      <para id="id1167213479238">3. <emphasis effect="italics">Row, Row, Row Your Boat</emphasis></para>
+    </section>
+  </content>
+</document>

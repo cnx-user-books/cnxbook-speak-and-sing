@@ -1,0 +1,45 @@
+<document xmlns="http://cnx.rice.edu/cnxml">
+  <title>Speak and Sing - Time Scaling with WSOLA</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m33240</md:content-id>
+  <md:title>Speak and Sing - Time Scaling with WSOLA</md:title>
+  <md:abstract>This module describes the WSOLA algorithm as a method to modify the time scale of a speech signal.</md:abstract>
+  <md:uuid>fcbd1f34-bb85-442c-b25d-bd5204aea692</md:uuid>
+</metadata>
+<content>
+    <section id="id1164937716251">
+      <title>Introduction</title>
+      <para id="id7878416">There are many applications for time-scale modification ranging from post production of audio video synchronization in film to voicemail playback. Time-scale modification essentially is the process of either speeding up or slowing down the apparent rate of speech without corrupting other characteristics of the signal such as pitch and voice quality. Resampling is out of the question because is directly modifies pitch and very often voice quality loss is significant. To maintain these characteristics, the short-time Fourier transform of corresponding regions of the original (input) and scaled (output) signals should be very similar. Overlap add algorithms achieve this by simply cutting out smoothly windowed chunks of the input signal, repositioning them to corresponding time indexes in the output signal, overlapping the windows to achieve continuity, and adding. WSOLA is unique among overlap add algorithms in that it maintains local Fourier similarity in a time-scaled fashion but more importantly, the excised segment is similar to the segment adjacent to the previously excised segment. This makes WSOLA a very robust time-scaling algorithm being able to time scale even in the presence of noise and even competing voices in the input speech signal.</para>
+    </section>
+    <section id="id1164939545416">
+      <title>The Algorithm</title>
+      <para id="id1164938319359">The first step is to window the input signal with a smooth window such as a hanning window. Let w(n) be the window. Then establish a time warp function τ(n) such that for n an index in the input signal τ(n) equals the time scaled index in the output signal. </para>
+      <para id="id9067578">The input signal should then be windowed such that each segment overlaps with half of the previous segment. Then copy the first windowed segment to the output signal. The first segment of the input should be copied to the first segment in the output without consideration for the time warp function. Call the location of the last copied segment in the input S<sub>1</sub>. Now the algorithm needs to find the next segment which it will copy, overlap and add with the current output signal.</para>
+      <para id="id3924088">There are quite a few ways to find this next segment. The most obvious method is to simply copy the segment at τ<sup>-1</sup>(S<sub>2</sub>) to the segment at S<sub>2</sub> in the output. However, this would wreak havoc on the phase synchronicity of the signal. The second method is to copy phase synchronous segment such that overlapping and adding will not cause huge phase differences between the two segments. This would maintain Fourier characteristics but would sound very choppy at syllable change edges in the speech. The WSOLA algorithm looks for a segment near τ<sup>-1</sup>(S<sub>2</sub>) that is most similar to the segment at τ<sup>-1</sup>(S<sub>2</sub>) + length(w). The next signal must be near (within a threshold) of the index given by the time warp function but also similar in Fourier characteristics to the next segment in the input signal. In other words, it finds a segment near the time scaled index such that it is very similar to the next naturally occurring segment in the input signal.</para>
+      <para id="id8433460">There are many ways to define most similar. The easiest way is Euclidian distance between the two signals. But computing the distance between the segments is computationally very expensive O(N<sup>2</sup>). The cross-correlation between the next adjacent segment and the region of interest seems to be the next alternative. The normalized cross-correlation if computed in the time domain is equally expensive. However, in the frequency domain, the computation is rather fast O(NlogN). The peak of the normalized cross-correlation occurs at the point of highest similarity. The segment corresponding to this point is then taken as the next segment and copied over to the output signal, overlapped with the existing signal and added. This is done iteratively until the entire output signal is created.</para>
+      <para id="id8396459">This algorithm can take arbitrary time-warp functions and can time-scale a signal while reliably maintaining Fourier characteristics. It is also less computationally expensive than simple up sampling or down sampling for non-integer scaling factors. In fact, sampling rate modification cannot be easily done for irrational scaling factors but this algorithm will even handle that.</para>
+    </section>
+    <section id="id2754698">
+      <title>Implementation</title>
+      <para id="id7704005">This algorithm was implemented in matlab and achieved good results even with arbitrary constant time warp functions. Constants ranging from .1 to 10 were tested with satisfactory results.</para>
+      <figure id="id1164937460806"><media id="id1164937460806_media" alt="Speech Signal">
+          <image mime-type="image/png" src="../../media/Voice.png" id="id1164937460806__onlineimage" height="394" width="501"/>
+        </media>
+      <caption>Short sample of a speech signal</caption></figure>
+      <para id="id7681152">
+        <figure id="id3098950"><media id="id3098950_media" alt="Scaled Speech Signal">
+            <image mime-type="image/png" src="../../media/ScaledVoice.png" id="id3098950__onlineimage" height="393" width="756"/>
+          </media>
+        <caption>Time scaled version of previous speech signal</caption></figure>
+      </para><para id="eip-586"><figure id="id3098951">
+<media id="id3098951_media" alt="Speech Signal FFT">
+            <image mime-type="image/png" src="../../media/Voice_fft.png" id="id3098951__onlineimage" height="389" width="496"/>
+          </media>
+        <caption>Fourier Transform of speech signal</caption></figure></para><para id="eip-871"><figure id="id3098952">
+<media id="id3098952_media" alt="Scaled Speech Signal FFT">
+            <image mime-type="image/png" src="../../media/ScaledVoice_fft.png" id="id3098952__onlineimage" height="389" width="496"/>
+          </media>
+        <caption>Fourier Transform of time scaled speech signal</caption></figure></para>
+    </section>
+  </content>
+</document>
